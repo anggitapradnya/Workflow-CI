@@ -36,4 +36,11 @@ jobs:
 
       - name: Run Modelling Script
         run: |
+          mkdir -p MLProject/output
           python MLProject/modelling.py
+
+      - name: Upload Modelling Output
+        uses: actions/upload-artifact@v3
+        with:
+          name: modelling-results
+          path: MLProject/output/
