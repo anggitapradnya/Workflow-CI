@@ -9,6 +9,6 @@ dependencies:
   - mlflow
   - matplotlib
   - seaborn
-  - dagshub
   - pip:
       - tqdm
+      - dagshub

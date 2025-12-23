@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch: # Trigger manual jika ingin
+  workflow_dispatch:
 
 jobs:
   train-model:
@@ -29,12 +29,11 @@ jobs:
           conda info
           conda list
 
-      - name: Install extra dependencies
+      - name: Install extra dependencies via pip
         run: |
           pip install --upgrade pip
-          pip install mlflow dagshub
+          pip install mlflow dagshub tqdm
 
       - name: Run Modelling Script
         run: |
-          cd MLProject
-          python modelling.py
+          python MLProject/modelling.py
