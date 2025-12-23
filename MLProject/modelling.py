@@ -6,29 +6,24 @@ import mlflow
 import mlflow.sklearn
 import os
 
-# Path dataset
 data_path = "MLProject/telco_churn_clean.csv"
 
 if not os.path.exists(data_path):
     raise FileNotFoundError(f"Dataset tidak ditemukan: {os.path.abspath(data_path)}")
 
-# Load dataset
 df = pd.read_csv(data_path)
 
 X = df.drop(columns=['Churn'])
 y = df['Churn']
 
-# Split data
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# MLflow setup
-mlflow.set_tracking_uri("file:MLProject/mlruns")  # simpan artefak di folder lokal mlruns
+mlflow.set_tracking_uri("file:MLProject/mlruns")  
 mlflow.set_experiment("Telco_Churn_Model_Balanced")
 mlflow.sklearn.autolog()
 
-# Model
 model = RandomForestClassifier(
     n_estimators=200,
     max_depth=10,
@@ -60,6 +55,5 @@ with mlflow.start_run(run_name="RandomForest_Manual_Balanced"):
     print(f"Recall: {rec:.4f}")
     print(f"ROC AUC: {roc_auc:.4f}")
 
-# Info lokasi artefak
 mlruns_path = os.path.abspath("MLProject/mlruns")
 print(f"Training selesai. Artefak MLflow disimpan di: {mlruns_path}")
