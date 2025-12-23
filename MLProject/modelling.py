@@ -5,7 +5,7 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 import mlflow
 import mlflow.sklearn
 
-df = pd.read_csv("/MLProject/telco_churn_clean.csv")
+df = pd.read_csv("MLProject/telco_churn_clean.csv")
 
 X = df.drop(columns=['Churn'])
 y = df['Churn']
