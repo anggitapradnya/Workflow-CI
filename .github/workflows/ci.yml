@@ -1,34 +1,40 @@
-name: MLflow CI
+name: ML Workflow CI
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # Trigger manual jika ingin
 
 jobs:
-  train:
+  train-model:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
         with:
-          python-version: "3.10"
+          auto-update-conda: true
+          python-version: 3.12
+          environment-file: MLProject/conda.yaml
+          activate-environment: ml-env
+          use-mamba: true
 
-      - name: Install MLflow
+      - name: Verify Environment
         run: |
-          pip install mlflow scikit-learn pandas numpy
+          conda info
+          conda list
 
-      - name: Run MLflow Project
+      - name: Install extra dependencies
         run: |
-          mlflow run ./MLProject
+          pip install --upgrade pip
+          pip install mlflow dagshub
 
-      - name: Upload MLflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlflow-artifacts
-          path: mlruns
+      - name: Run Modelling Script
+        run: |
+          cd MLProject
+          python modelling.py
