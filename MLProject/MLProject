@@ -1,9 +1,7 @@
-name: MLProject
+name: telco-churn-mlflow
 
 conda_env: conda.yaml
 
 entry_points:
   main:
-    parameters:
-      experiment_name: { type: str, default: "Telco_Churn_RF" }
-    command: "python MLProject/modelling.py --experiment_name {experiment_name}"
+    command: "python modelling.py"
