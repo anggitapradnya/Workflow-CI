@@ -6,7 +6,7 @@ import mlflow
 import mlflow.sklearn
 
 df = pd.read_csv(
-    "MLProject/telco_churn_clean.csv"
+    "telco_churn_clean.csv"
 )
 
 X = df.drop(columns=["Churn"])
