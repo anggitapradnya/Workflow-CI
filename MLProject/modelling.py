@@ -7,22 +7,27 @@ import mlflow.sklearn
 import os
 import argparse
 
+# Argument parser untuk experiment name
 parser = argparse.ArgumentParser()
 parser.add_argument("--experiment_name", type=str, default="Telco_Churn_RF")
 args = parser.parse_args()
 experiment_name = args.experiment_name
 
-mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
+# Gunakan SQLite backend
+mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db")
 mlflow.set_tracking_uri(mlflow_tracking_uri)
 
+# Set experiment
 try:
     mlflow.set_experiment(experiment_name)
 except Exception as e:
     print(f"Error setting experiment: {e}")
     mlflow.set_experiment("Default")
 
+# Aktifkan autologging
 mlflow.sklearn.autolog()
 
+# Load dataset
 data_path = os.path.join(os.path.dirname(__file__), "telco_churn_clean.csv")
 df = pd.read_csv(data_path)
 
@@ -33,6 +38,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
+# Model Random Forest
 model = RandomForestClassifier(
     n_estimators=200,
     max_depth=10,
@@ -44,7 +50,8 @@ model = RandomForestClassifier(
     n_jobs=-1
 )
 
-with mlflow.start_run(run_name="RF_Balanced_200trees"):
+# Mulai MLflow run tanpa nested run
+with mlflow.start_run(run_name="RF_Balanced_200trees", nested=False):
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
