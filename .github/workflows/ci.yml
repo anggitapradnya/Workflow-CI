@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python 3.12.7 with Conda
+      - name: Set up Python 3.12 with Conda
         uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: 3.12
@@ -27,7 +27,7 @@ jobs:
           auto-update-conda: true
           use-mamba: true
 
-      - name: Check Environment
+      - name: Check environment
         run: |
           python --version
           conda info
@@ -38,17 +38,11 @@ jobs:
           pip install --upgrade pip
           pip install mlflow dagshub tqdm
 
-      - name: Create mlruns folder
-        run: mkdir -p $GITHUB_WORKSPACE/mlruns
-
       - name: Set MLflow Tracking URI
-        run: echo "MLFLOW_TRACKING_URI=$GITHUB_WORKSPACE/mlruns" >> $GITHUB_ENV
+        run: echo "MLFLOW_TRACKING_URI=${{ github.workspace }}/mlruns" >> $GITHUB_ENV
 
       - name: Run MLflow Project
         run: mlflow run MLProject -e main --env-manager local
-
-      - name: Upload to Google Drive
-        run: echo "Simulated upload to Google Drive (not required in CI)"
 
       - name: Upload MLflow Results
         uses: actions/upload-artifact@v4

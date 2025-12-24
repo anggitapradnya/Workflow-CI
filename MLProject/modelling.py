@@ -4,24 +4,26 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 import mlflow
 import mlflow.sklearn
+import os
 
-df = pd.read_csv(
-    "telco_churn_clean.csv"
-)
+mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
+mlflow.set_tracking_uri(mlflow_tracking_uri)
+
+experiment_name = "Telco_Churn_RF"
+if not mlflow.get_experiment_by_name(experiment_name):
+    mlflow.create_experiment(experiment_name)
+
+mlflow.set_experiment(experiment_name)
+mlflow.sklearn.autolog()
+
+df = pd.read_csv("MLProject/telco_churn_clean.csv")
 
 X = df.drop(columns=["Churn"])
 y = df["Churn"]
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.2,
-    random_state=42,
-    stratify=y
+    X, y, test_size=0.2, random_state=42, stratify=y
 )
-
-mlflow.set_experiment("Telco_Churn_RF")
-mlflow.sklearn.autolog()
 
 model = RandomForestClassifier(
     n_estimators=200,
