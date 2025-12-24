@@ -7,7 +7,7 @@ import mlflow.sklearn
 import os
 import argparse
 
-# Argument parser untuk experiment name
+# Argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument("--experiment_name", type=str, default="Telco_Churn_RF")
 args = parser.parse_args()
@@ -18,11 +18,7 @@ mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db")
 mlflow.set_tracking_uri(mlflow_tracking_uri)
 
 # Set experiment
-try:
-    mlflow.set_experiment(experiment_name)
-except Exception as e:
-    print(f"Error setting experiment: {e}")
-    mlflow.set_experiment("Default")
+mlflow.set_experiment(experiment_name)
 
 # Aktifkan autologging
 mlflow.sklearn.autolog()
@@ -50,23 +46,23 @@ model = RandomForestClassifier(
     n_jobs=-1
 )
 
-# Mulai MLflow run tanpa nested run
-with mlflow.start_run(run_name="RF_Balanced_200trees", nested=False):
-    model.fit(X_train, y_train)
+# Fit model (MLProject akan handle run)
+model.fit(X_train, y_train)
 
-    y_pred = model.predict(X_test)
-    y_proba = model.predict_proba(X_test)[:, 1]
+y_pred = model.predict(X_test)
+y_proba = model.predict_proba(X_test)[:, 1]
 
-    acc = accuracy_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
-    roc_auc = roc_auc_score(y_test, y_proba)
+# Hitung metrics dan print
+acc = accuracy_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred)
+rec = recall_score(y_test, y_pred)
+roc_auc = roc_auc_score(y_test, y_proba)
 
-    print(f"Accuracy : {acc:.4f}")
-    print(f"F1 Score : {f1:.4f}")
-    print(f"Precision: {prec:.4f}")
-    print(f"Recall   : {rec:.4f}")
-    print(f"ROC AUC  : {roc_auc:.4f}")
+print(f"Accuracy : {acc:.4f}")
+print(f"F1 Score : {f1:.4f}")
+print(f"Precision: {prec:.4f}")
+print(f"Recall   : {rec:.4f}")
+print(f"ROC AUC  : {roc_auc:.4f}")
 
 print("\nTraining selesai. Buka MLflow UI untuk melihat hasil.")
