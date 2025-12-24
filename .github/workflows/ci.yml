@@ -42,7 +42,7 @@ jobs:
         run: echo "MLFLOW_TRACKING_URI=file:./mlruns" >> $GITHUB_ENV
 
       - name: Run MLflow Project
-        run: mlflow run MLProject -e main --no-conda
+        run: mlflow run MLProject -e main --env-manager local
 
       - name: Upload to Google Drive
         run: echo "Simulated upload to Google Drive (not required in CI)"
