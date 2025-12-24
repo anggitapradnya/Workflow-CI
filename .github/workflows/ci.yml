@@ -24,7 +24,7 @@ jobs:
           auto-update-conda: true
           use-mamba: true
 
-      - name: Install dependencies
+      - name: Install additional dependencies
         run: |
           pip install --upgrade pip
           pip install mlflow dagshub tqdm scikit-learn pandas
@@ -33,7 +33,7 @@ jobs:
         run: echo "MLFLOW_TRACKING_URI=file:./mlruns" >> $GITHUB_ENV
 
       - name: Run MLflow Project
-        run: mlflow run MLProject -e main --env-manager local
+        run: mlflow run MLProject -e main --env-manager local --experiment-name Telco_Churn_RF
 
       - name: Upload MLflow Results
         uses: actions/upload-artifact@v4

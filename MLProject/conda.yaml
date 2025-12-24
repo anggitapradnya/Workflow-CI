@@ -1,14 +1,13 @@
 name: ml-env
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - python=3.12
   - pip
-  - pandas
-  - scikit-learn
-  - mlflow
-  - matplotlib
-  - seaborn
   - pip:
+      - mlflow
+      - scikit-learn
+      - pandas
       - tqdm
       - dagshub

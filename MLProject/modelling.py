@@ -10,12 +10,17 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--experiment_name", type=str, default="Telco_Churn_RF")
 args = parser.parse_args()
-
 experiment_name = args.experiment_name
 
 mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
 mlflow.set_tracking_uri(mlflow_tracking_uri)
-mlflow.set_experiment(experiment_name)
+
+try:
+    mlflow.set_experiment(experiment_name)
+except Exception as e:
+    print(f"Error setting experiment: {e}")
+    mlflow.set_experiment("Default")
+
 mlflow.sklearn.autolog()
 
 data_path = os.path.join(os.path.dirname(__file__), "telco_churn_clean.csv")
