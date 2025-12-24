@@ -35,11 +35,17 @@ jobs:
       - name: Run MLflow Project
         run: mlflow run MLProject -e main --env-manager local --experiment-name Telco_Churn_RF
 
-      - name: Upload MLflow Results
+      - name: Upload MLflow DB
         uses: actions/upload-artifact@v4
         with:
-          name: mlflow-runs
+          name: mlflow-db
           path: mlflow.db
+
+      - name: Upload MLruns folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlruns
+          path: mlruns/
 
       - name: Complete job
         run: echo "Job completed successfully"

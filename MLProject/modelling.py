@@ -7,34 +7,50 @@ import mlflow.sklearn
 import os
 import argparse
 
-# Argument parser
+# --------------------------------------
+# Parsing argument untuk experiment
+# --------------------------------------
 parser = argparse.ArgumentParser()
-parser.add_argument("--experiment_name", type=str, default="Telco_Churn_RF")
+parser.add_argument(
+    "--experiment_name",
+    type=str,
+    default=None,
+    help="Nama experiment MLflow. Jika None, pakai default experiment."
+)
 args = parser.parse_args()
-experiment_name = args.experiment_name
 
-# Gunakan SQLite backend
+# --------------------------------------
+# Setup MLflow tracking URI
+# --------------------------------------
 mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db")
 mlflow.set_tracking_uri(mlflow_tracking_uri)
 
-# Set experiment
-mlflow.set_experiment(experiment_name)
+# Jika ada experiment name, set experiment, kalau tidak pakai default
+if args.experiment_name:
+    mlflow.set_experiment(args.experiment_name)
 
-# Aktifkan autologging
+# Aktifkan autolog untuk scikit-learn
 mlflow.sklearn.autolog()
 
-# Load dataset
+# --------------------------------------
+# Load data
+# --------------------------------------
 data_path = os.path.join(os.path.dirname(__file__), "telco_churn_clean.csv")
 df = pd.read_csv(data_path)
 
 X = df.drop(columns=["Churn"])
 y = df["Churn"]
 
+# --------------------------------------
+# Split train-test
+# --------------------------------------
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# Model Random Forest
+# --------------------------------------
+# Definisikan model
+# --------------------------------------
 model = RandomForestClassifier(
     n_estimators=200,
     max_depth=10,
@@ -46,13 +62,15 @@ model = RandomForestClassifier(
     n_jobs=-1
 )
 
-# Fit model (MLProject akan handle run)
+# --------------------------------------
+# Fit model dan otomatis log via MLflow
+# --------------------------------------
 model.fit(X_train, y_train)
 
+# Prediksi dan evaluasi
 y_pred = model.predict(X_test)
 y_proba = model.predict_proba(X_test)[:, 1]
 
-# Hitung metrics dan print
 acc = accuracy_score(y_test, y_pred)
 f1 = f1_score(y_test, y_pred)
 prec = precision_score(y_test, y_pred)
