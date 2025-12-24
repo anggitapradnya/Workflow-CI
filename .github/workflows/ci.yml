@@ -12,9 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up job
-        run: echo "Job started"
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -27,19 +24,13 @@ jobs:
           auto-update-conda: true
           use-mamba: true
 
-      - name: Check environment
-        run: |
-          python --version
-          conda info
-          conda list
-
-      - name: Install additional dependencies
+      - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install mlflow dagshub tqdm
+          pip install mlflow dagshub tqdm scikit-learn pandas
 
       - name: Set MLflow Tracking URI
-        run: echo "MLFLOW_TRACKING_URI=${{ github.workspace }}/mlruns" >> $GITHUB_ENV
+        run: echo "MLFLOW_TRACKING_URI=file:./mlruns" >> $GITHUB_ENV
 
       - name: Run MLflow Project
         run: mlflow run MLProject -e main --env-manager local

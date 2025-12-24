@@ -1,31 +1,25 @@
-import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 import mlflow
 import mlflow.sklearn
+import os
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--experiment_name", type=str, default="Telco_Churn_RF")
+args = parser.parse_args()
+
+experiment_name = args.experiment_name
 
 mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
 mlflow.set_tracking_uri(mlflow_tracking_uri)
-
-
-experiment_name = "Telco_Churn_RF"
-experiment = mlflow.get_experiment_by_name(experiment_name)
-if experiment is None:
-    mlflow.create_experiment(experiment_name)
 mlflow.set_experiment(experiment_name)
 mlflow.sklearn.autolog()
 
-
-BASE_DIR = os.path.dirname(__file__)  
-CSV_PATH = os.path.join(BASE_DIR, "telco_churn_clean.csv")
-
-if not os.path.exists(CSV_PATH):
-    raise FileNotFoundError(f"File CSV tidak ditemukan: {CSV_PATH}")
-
-df = pd.read_csv(CSV_PATH)
+data_path = os.path.join(os.path.dirname(__file__), "telco_churn_clean.csv")
+df = pd.read_csv(data_path)
 
 X = df.drop(columns=["Churn"])
 y = df["Churn"]

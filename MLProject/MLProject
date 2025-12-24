@@ -1,7 +1,9 @@
-name: telco-churn-ci
+name: MLProject
 
 conda_env: conda.yaml
 
 entry_points:
   main:
-    command: "python modelling.py"
+    parameters:
+      experiment_name: { type: str, default: "Telco_Churn_RF" }
+    command: "python MLProject/modelling.py --experiment_name {experiment_name}"
