@@ -38,8 +38,11 @@ jobs:
           pip install --upgrade pip
           pip install mlflow dagshub tqdm
 
+      - name: Create mlruns folder
+        run: mkdir -p $GITHUB_WORKSPACE/mlruns
+
       - name: Set MLflow Tracking URI
-        run: echo "MLFLOW_TRACKING_URI=file:./mlruns" >> $GITHUB_ENV
+        run: echo "MLFLOW_TRACKING_URI=$GITHUB_WORKSPACE/mlruns" >> $GITHUB_ENV
 
       - name: Run MLflow Project
         run: mlflow run MLProject -e main --env-manager local
